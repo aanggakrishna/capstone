@@ -13,7 +13,7 @@ st.set_page_config(layout="wide")
 st.title('Daya Saing Export Udang Beku Indonesia dengan Negara Lain')
 st.write('Product: 030617 Frozen shrimps and prawns')
 st.write('Seafood adalah makanan yang tinggi protein dan mudah untuk didapatkan di Indonesia karena wilayah perairan indonesia lebih luas ketimbang daratannya. Selain di Indonesia, hampir sebagian besar negara memiliki olehan seafood tersendiri. Salah satu bahan makanan yang hampir selalu ada saat membeli olahan seafood adalah udang.')
-image = Image.open('udang.jpg')
+image = Image.open('udang.JPG')
 
 st.image(image, caption='makanan berbahan udang')
 st.write('Selain memproduksi sendiri, untuk memenuhi kebutuan pasar di setiap negara, sebagian besar negara juga tergantung dari ekspor negara lain')
