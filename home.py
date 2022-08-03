@@ -6,12 +6,18 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 from scipy import stats
-
+from PIL import Image
 
 #content-start
-
-st.title('Daya Saing Udang Beku Indonesia')
+st.set_page_config(layout="wide")
+st.title('Daya Saing Export Udang Beku Indonesia dengan Negara Lain')
 st.write('Product: 030617 Frozen shrimps and prawns')
+st.write('Seafood adalah makanan yang tinggi protein dan mudah untuk didapatkan di Indonesia karena wilayah perairan indonesia lebih luas ketimbang daratannya. Selain di Indonesia, hampir sebagian besar negara memiliki olehan seafood tersendiri. Salah satu bahan makanan yang hampir selalu ada saat membeli olahan seafood adalah udang.')
+image = Image.open('udang.jpg')
+
+st.image(image, caption='makanan berbahan udang')
+st.write('Selain memproduksi sendiri, untuk memenuhi kebutuan pasar di setiap negara, sebagian besar negara juga tergantung dari ekspor negara lain')
+st.write('berikut ini adalah daftar negara pengekspor udang beku (5)terbesar didunia')
 data = pd.read_csv('5exportall.csv')
 data = data.set_index('country').stack().reset_index()
 data.columns=['country', 'year', 'total']
@@ -59,21 +65,22 @@ with st.sidebar:
 data_5_all = data_5_all.loc[(data_5_all['year']<=end_tahun) & (data_5_all['year']>=start_tahun)]
 with st.container():
     st.title('TOP 5 Negara Export Udang Beku')
-    st.write('hello')
+    st.write('nilai per ribu USD')
     c = alt.Chart(data_all).mark_line().encode(
         x='year', y='total', color='country',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c, use_container_width=True)
-    with st.expander("See data"):
+    st.write('untuk tahun 2021 saja dari grafik diatas dapat dilihat bahwa India berada pada tingkat pengekspor udang terbesar didunia yaitu 5,148,765.000 USD,diikuti oleh Equador, Vietnam, Indonesia (1,530,310.000 USD), dan Argentina')
+    with st.expander("Lihat Data Tabel"):
         table = pd.pivot_table(data_all, values='total', index=['country'],
                         columns=['year'])
         st.table(table)
         st.write("""
             Sumber trademap.org""")
 with st.container():
-    st.title('lalal')
-    st.write('hello')
-    st.write('/USD Dollar thousand')
+    st.title('Hasil Ekspor Indonesia per tahun')
+    st.write('2017-2021')
+    st.write('per ribu USD')
     data_indonesia_ori = data_indonesia
     data_indonesia = data_indonesia.loc[(data_indonesia['year']<=end_tahun) & (data_indonesia['year']>=start_tahun)]
 
@@ -106,8 +113,9 @@ with st.container():
         x='year:O',
         tooltip=['year', 'total']
     )
+    st.write('Untuk tahun 2017 - 2019 ekspor Indonesia untuk udang beku mengalami penurunan hingga 6%. Tetapi setelah 2019-2021 terdapat peningkatan ekspor yang mencapai 17% pada tahun 2021')
     st.altair_chart(bar_chart_indonesia, use_container_width=True)
-    with st.expander("See data"):
+    with st.expander("Lihat Data Tabel"):
 
         st.table(data_indonesia.sort_values('total',ascending=False))
         st.write("""
@@ -119,14 +127,15 @@ with st.container():
 
 with st.container():
     st.title('TOP 5 Negara Tujuan Export Udang Beku Indonesia')
-    st.write('#TOP 5 Negara Tujuan Export Udang Indonesia')
+    
     data_5_all = data_5_all.loc[(data_5_all['year']<=end_tahun) & (data_5_all['year']>=start_tahun)]
     data_5_all_negara = data_5_all.head(25)
     c = alt.Chart(data_5_all_negara).mark_bar(interpolate='basis').encode(
         x='country:O', y='total:Q', column='year:N', color='country:N',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c)
-    with st.expander("See data"):
+    st.write('United States of America adalah negara dengan importir udang beku terbanyak dari indonesia. walaupun nilai dari tahun 2017-2019 terjadi penurunan, tetapi untuk tahun berikutnya terlah terjadi lonjakan ekspor yang meningkat bahkan melewati nilai ekspor 5 tahun terakhir. Sedangkan untuk pasar Jepang ekspor Indonesia terlihat stabil dengan naik turun yang tidak begitu banyak.Untuk pasar China dari tahun 2020 terjadi penurunan sampai tahun 2021')
+    with st.expander("Lihat Data Tabel"):
         table = pd.pivot_table(data_5_all_negara, values='total', index=['country'],
                         columns=['year'])
         st.table(table)
@@ -134,9 +143,8 @@ with st.container():
             Sumber trademap.org""")
 
 with st.container():
-    st.title('Daya Saing Indonesia dari Negara Lain untuk')
-    st.write('--')
-
+    st.title('Pengaruh Daya Saing (RCA) terhadap Ekspor Udang Indonesia')
+    st.write('ke negara top 5 importir (Canada, China, Jepang, US, Taipe)')
 #persiapan RCA    
 # st.table(data_5_all)
 data_5_country= data_5_all['country'].unique()
@@ -271,7 +279,12 @@ c5 = alt.Chart(data_join_top_5).mark_line().encode(
         x='year', y='RCA', color='country',tooltip=['year', 'RCA', 'country'])
 
 st.altair_chart(c5, use_container_width=True)
-with st.expander("See data"):
+st.write('Revealed Comparative Advantage (RCA) digunakan menentukan keunggulan daya saing.')
+st.write('Jika nilai RCA > 1 maka berdaya saing KUAT sedangkan')
+st.write('Jika nilai RCA < 1 maka berdaya saing LEMAH')
+st.write('Dalam data diatas daya sait LEMAH hanya terdapat pada CHINA di tahun 2021 yaitu sebesar 0.38 selainnya bernilai KUAT')
+st.write('Itu berarti daya saing Udang Beku Indonesia dapat bersaing dengan exportir dari negara lain tetapi untuk negara China masih perlu adanya peningkatan daya saing agar China kembali melakukan export ke Indonesia')
+with st.expander("Lihat Data Tabel"):
     st.write(data_join_top_5)
 
 
@@ -401,5 +414,5 @@ bar_chart = alt.Chart(data_join).mark_line().encode(
         tooltip=['year', 'RCA']
     )
 st.altair_chart(bar_chart, use_container_width=True)
-with st.expander("See data"):
+with st.expander("Lihat Data Tabel"):
     st.write(data_join[['country','year','RCA']])
