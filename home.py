@@ -79,7 +79,11 @@ with st.container():
         st.table(table)
         st.write("""
             Sumber trademap.org""")
+
 with st.container():
+    image = Image.open('berita.JPG')
+
+    st.image(image, caption='berita export udang')
     st.title('Hasil Ekspor Indonesia per tahun')
     st.write('2017-2021')
     st.write('per ribu USD')
