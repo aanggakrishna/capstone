@@ -3,6 +3,7 @@ import pandas as pd
 import altair as alt
 import matplotlib
 matplotlib.use('Agg')
+import numpy as np
 
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -342,7 +343,7 @@ def regresi():
     # plt.plot(x5, mymodel5)
     # plt.show()
     
-    fig = plt.figure(figsize=(5, 2))
+    fig = plt.figure(figsize=(3, 2))
     # plt.scatter(x1, y1, color = 'green')
     # plt.scatter(x2, y2, color = 'blue')
     # plt.scatter(x3, y3, color = 'yellow')
@@ -416,3 +417,44 @@ bar_chart = alt.Chart(data_join).mark_line().encode(
 st.altair_chart(bar_chart, use_container_width=True)
 with st.expander("Lihat Data Tabel"):
     st.write(data_join[['country','year','RCA']])
+
+
+# st.write(udang_indonesia_ke_all[['country','2021']])
+# st.write(export_udang_dunia_all.loc(export_udang_dunia_all['year']=='2021'))
+
+indo_ke_all = udang_indonesia_ke_all[['country','2021']]
+all_ke_all = export_udang_dunia_all.loc[export_udang_dunia_all['year']=='2021']
+negara_tidak_indonesia = pd.merge(indo_ke_all,all_ke_all, on='country',how='right')
+negara_tidak_indonesia = negara_tidak_indonesia.loc[negara_tidak_indonesia['2021'].isnull()]
+negara_tidak_indonesia = negara_tidak_indonesia[['country','export_udang_dunia']]
+negara_tidak_indonesia.drop(negara_tidak_indonesia.loc[negara_tidak_indonesia['country']=='Indonesia'].index, inplace=True)
+
+
+
+latlong = pd.read_csv('latlong.csv')
+
+negara_latlong = pd.merge(negara_tidak_indonesia,latlong, on='country')
+
+negara_latlong['lat'].astype(int)
+negara_latlong['lon'].astype(int)
+st.map(negara_latlong[['lat','lon']])
+col1,col2 = st.columns(2)
+
+with col1:
+    st.write('Top 10 Daftar Negara Importir Udang bukan dari Indonesia')
+   
+
+    c = alt.Chart(negara_latlong.head(10)).mark_bar(interpolate='basis').encode(
+            x='export_udang_dunia', y=alt.Y('country', sort='-x'),  color='country:N',tooltip=['export_udang_dunia', 'country'])
+
+    st.altair_chart(c)
+with col2:
+    st.write('Down 10 Daftar Negara Importir Udang bukan dari Indonesia')
+    
+
+    c = alt.Chart(negara_latlong.tail(10)).mark_bar(interpolate='basis').encode(
+            x='export_udang_dunia', y=alt.Y('country', sort='x'),  color='country:N',tooltip=['export_udang_dunia', 'country'])
+
+    st.altair_chart(c)
+
+st.write('Negara-Negara diatas adalah negara yang melakukan import Udang Beku dari negara lain. Agar Indonesia dapat memperlebar pasar ke negara tersebut dibutuhkan peran dari pemerintah untuk mendorong kerjasama dengan negar tersebut')
