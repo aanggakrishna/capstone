@@ -67,13 +67,14 @@ data_5_all = data_5_all.loc[(data_5_all['year']<=end_tahun) & (data_5_all['year'
 with st.container():
     st.title('TOP 5 Negara Export Udang Beku')
     st.write('nilai per ribu USD')
-    c = alt.Chart(data_all).mark_line().encode(
+    jumlah = (int(end_tahun)-int(start_tahun)+1)*5
+    c = alt.Chart(data_5_all.head(jumlah)).mark_line().encode(
         x='year', y='total', color='country',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c, use_container_width=True)
     st.write('untuk tahun 2021 saja dari grafik diatas dapat dilihat bahwa India berada pada tingkat pengekspor udang terbesar didunia yaitu 5,148,765.000 USD,diikuti oleh Equador, Vietnam, Indonesia (1,530,310.000 USD), dan Argentina')
     with st.expander("Lihat Data Tabel"):
-        table = pd.pivot_table(data_all, values='total', index=['country'],
+        table = pd.pivot_table(data_5_all.head(5), values='total', index=['country'],
                         columns=['year'])
         st.table(table)
         st.write("""
