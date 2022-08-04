@@ -68,13 +68,13 @@ with st.container():
     st.title('TOP 5 Negara Export Udang Beku')
     st.write('nilai per ribu USD')
     jumlah = (int(end_tahun)-int(start_tahun)+1)*5
-    c = alt.Chart(data_5_all.head(jumlah)).mark_line().encode(
+    c = alt.Chart(data_all).mark_line().encode(
         x='year', y='total', color='country',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c, use_container_width=True)
     st.write('untuk tahun 2021 saja dari grafik diatas dapat dilihat bahwa India berada pada tingkat pengekspor udang terbesar didunia yaitu 5,148,765.000 USD,diikuti oleh Equador, Vietnam, Indonesia (1,530,310.000 USD), dan Argentina')
     with st.expander("Lihat Data Tabel"):
-        table = pd.pivot_table(data_5_all.head(5), values='total', index=['country'],
+        table = pd.pivot_table(data_all, values='total', index=['country'],
                         columns=['year'])
         st.table(table)
         st.write("""
@@ -114,7 +114,7 @@ with st.container():
         nilai_sebelumnya = data_indonesia_ori.loc[data_indonesia_ori['year'] == '2019']
         delta = (nilai['total']-nilai_sebelumnya['total'])/nilai['total']*100
         st.metric('2021',nilai['total'],'{} %'.format(round(delta.iloc[0],2)))
-    bar_chart_indonesia = alt.Chart(data_indonesia).mark_bar().encode(
+    bar_chart_indonesia = alt.Chart(data_indonesia).mark_line().encode(
         y='total:Q',
         x='year:O',
         tooltip=['year', 'total']
@@ -288,7 +288,7 @@ st.altair_chart(c5, use_container_width=True)
 st.write('Revealed Comparative Advantage (RCA) digunakan menentukan keunggulan daya saing.')
 st.write('Jika nilai RCA > 1 maka berdaya saing KUAT sedangkan')
 st.write('Jika nilai RCA < 1 maka berdaya saing LEMAH')
-st.write('Dalam data diatas daya sait LEMAH hanya terdapat pada CHINA di tahun 2021 yaitu sebesar 0.38 selainnya bernilai KUAT')
+st.write('Dalam data diatas daya saing LEMAH hanya terdapat pada CHINA di tahun 2021 yaitu sebesar 0.38 selainnya bernilai KUAT')
 st.write('Itu berarti daya saing Udang Beku Indonesia dapat bersaing dengan exportir dari negara lain tetapi untuk negara China masih perlu adanya peningkatan daya saing agar China kembali melakukan export ke Indonesia')
 with st.expander("Lihat Data Tabel"):
     st.write(data_join_top_5)
@@ -433,7 +433,8 @@ negara_tidak_indonesia = pd.merge(indo_ke_all,all_ke_all, on='country',how='righ
 negara_tidak_indonesia = negara_tidak_indonesia.loc[negara_tidak_indonesia['2021'].isnull()]
 negara_tidak_indonesia = negara_tidak_indonesia[['country','export_udang_dunia']]
 negara_tidak_indonesia.drop(negara_tidak_indonesia.loc[negara_tidak_indonesia['country']=='Indonesia'].index, inplace=True)
-
+# st.write(indo_ke_all)
+# st.write(all_ke_all)
 
 
 latlong = pd.read_csv('latlong.csv')
