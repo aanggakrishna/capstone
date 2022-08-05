@@ -73,13 +73,14 @@ with st.container():
 
     st.altair_chart(c, use_container_width=True)
     st.write('untuk tahun 2021 saja dari grafik diatas dapat dilihat bahwa India berada pada tingkat pengekspor udang terbesar didunia yaitu 5,148,765.000 USD,diikuti oleh Equador, Vietnam, Indonesia (1,530,310.000 USD), dan Argentina')
+    
     with st.expander("Lihat Data Tabel"):
         table = pd.pivot_table(data_all, values='total', index=['country'],
                         columns=['year'])
         st.table(table)
         st.write("""
             Sumber trademap.org""")
-
+   
 with st.container():
     image = Image.open('berita.JPG')
 
@@ -121,6 +122,9 @@ with st.container():
     )
     st.write('Untuk tahun 2017 - 2019 ekspor Indonesia untuk udang beku mengalami penurunan hingga 6%. Tetapi setelah 2019-2021 terdapat peningkatan ekspor yang mencapai 17% pada tahun 2021')
     st.altair_chart(bar_chart_indonesia, use_container_width=True)
+    st.write('melansir dari detik finance  Penurunan nilai ekspor udang pada tahun 2019 ini terjadi akibat turunnya harga ekspor udang dari Indonesia, yakni menjadi USD 8,26 per kilogram pada kuartal I 2019 dari sebelumnya USD 9,35 per kilogram. dikarenakan beberapa produsen utama dunia seperti India, Argentina, dan Meksiko pasokannya meningkat di pasar-pasar tersebut dengan harga yang relatif rendah.')
+    with st.expander('sumber berita'):
+        st.write("finance.detik.com/berita-ekonomi-bisnis/d-4592433/penjelasan-lengkap-kkp-soal-ekspor-produk-perikanan-turun")
     with st.expander("Lihat Data Tabel"):
 
         st.table(data_indonesia.sort_values('total',ascending=False))
@@ -140,7 +144,8 @@ with st.container():
         x='country:O', y='total:Q', column='year:N', color='country:N',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c)
-    st.write('United States of America adalah negara dengan importir udang beku terbanyak dari indonesia. walaupun nilai dari tahun 2017-2019 terjadi penurunan, tetapi untuk tahun berikutnya terlah terjadi lonjakan ekspor yang meningkat bahkan melewati nilai ekspor 5 tahun terakhir. Sedangkan untuk pasar Jepang ekspor Indonesia terlihat stabil dengan naik turun yang tidak begitu banyak.Untuk pasar China dari tahun 2020 terjadi penurunan sampai tahun 2021')
+    st.write('United States of America adalah negara dengan importir udang beku terbanyak dari indonesia. walaupun nilai dari tahun 2017-2019 terjadi penurunan, tetapi untuk tahun berikutnya terlah terjadi lonjakan ekspor yang meningkat bahkan melewati nilai ekspor 5 tahun terakhir. Sedangkan untuk pasar Jepang ekspor Indonesia terlihat stabil dengan naik turun yang tidak begitu banyak.')
+    st.write('Untuk pasar China dari tahun 2020 terjadi penurunan sampai tahun 2021. Hal ini dikarenakan COVID 19 yang terjadi pada awalnya di Cina sehingga menyebabkan export ke negara Cina tidak dapat dilakukan')
     with st.expander("Lihat Data Tabel"):
         table = pd.pivot_table(data_5_all_negara, values='total', index=['country'],
                         columns=['year'])
@@ -288,8 +293,8 @@ st.altair_chart(c5, use_container_width=True)
 st.write('Revealed Comparative Advantage (RCA) digunakan menentukan keunggulan daya saing.')
 st.write('Jika nilai RCA > 1 maka berdaya saing KUAT sedangkan')
 st.write('Jika nilai RCA < 1 maka berdaya saing LEMAH')
-st.write('Dalam data diatas daya saing LEMAH hanya terdapat pada CHINA di tahun 2021 yaitu sebesar 0.38 selainnya bernilai KUAT')
-st.write('Itu berarti daya saing Udang Beku Indonesia dapat bersaing dengan exportir dari negara lain tetapi untuk negara China masih perlu adanya peningkatan daya saing agar China kembali melakukan export ke Indonesia')
+st.write('Dalam data diatas daya saing LEMAH hanya terdapat pada CHINA di tahun 2021 yaitu sebesar 0.38 selainnya bernilai KUAT hal ini disebabkan karena export yang masuk ke negara tersebut tidak bisa dilakukan karena COVID 19 yang baru melanda China')
+st.write('Itu berarti daya saing Udang Beku Indonesia dapat bersaing dengan exportir dari negara lain tetapi untuk negara China masih perlu adanya peningkatan daya saing agar China kembali melakukan export ke Indonesia apalagi dengan COVID 19 yang sudah mebaik kedepannya')
 with st.expander("Lihat Data Tabel"):
     st.write(data_join_top_5)
 
@@ -399,6 +404,7 @@ with col3:
 
 #caridata
 cari = option
+st.write('Pilih data dari dropdown di sidebar untuk melihat nilai RCA')
 st.write(cari)
 data1=data_5_all.loc[data_5_all['country']==cari].reset_index(drop=True)
 data2 = export_total_indo_all.loc[export_total_indo_all['country']==cari]
@@ -420,6 +426,7 @@ bar_chart = alt.Chart(data_join).mark_line().encode(
         tooltip=['year', 'RCA']
     )
 st.altair_chart(bar_chart, use_container_width=True)
+
 with st.expander("Lihat Data Tabel"):
     st.write(data_join[['country','year','RCA']])
 
@@ -444,6 +451,9 @@ negara_latlong = pd.merge(negara_tidak_indonesia,latlong, on='country')
 negara_latlong['lat'].astype(int)
 negara_latlong['lon'].astype(int)
 st.map(negara_latlong[['lat','lon']])
+st.write('Data sebaran diatas adalah negara-negara yang melakukan import udang beku dari negara lain diluar Indonesia')
+
+st.write('Jika dilihat negara yang dekat dengan Indonesia, yaitu Timor-Leste saja melakukan import udang dari negara lain padalah kita adalah negara tetangga terdekatnya.')
 col1,col2 = st.columns(2)
 
 with col1:
@@ -463,4 +473,6 @@ with col2:
 
     st.altair_chart(c)
 
-st.write('Negara-Negara diatas adalah negara yang melakukan import Udang Beku dari negara lain. Agar Indonesia dapat memperlebar pasar ke negara tersebut dibutuhkan peran dari pemerintah untuk mendorong kerjasama dengan negar tersebut')
+
+
+st.write('Negara-Negara diatas adalah negara yang melakukan import Udang Beku dari negara lain. Agar Indonesia dapat memperlebar pasar ke negara tersebut dibutuhkan peran dari pemerintah untuk mendorong kerjasama dengan negara tersebut agar export udang beku di Indonesia bisa ditingkatkan untuk meningkatkan pendapatan negara')
