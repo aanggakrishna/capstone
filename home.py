@@ -12,17 +12,18 @@ from PIL import Image
 #content-start
 st.set_page_config(layout="wide")
 st.title('Daya Saing Export Udang Beku Indonesia dengan Negara Lain')
-st.write('Product: 030617 Frozen shrimps and prawns')
-st.write('Seafood adalah makanan yang tinggi protein dan mudah untuk didapatkan di Indonesia karena wilayah perairan indonesia lebih luas ketimbang daratannya. Selain di Indonesia, hampir sebagian besar negara memiliki olehan seafood tersendiri. Salah satu bahan makanan yang hampir selalu ada saat membeli olahan seafood adalah udang.')
+st.write('_Product: 030617 Frozen shrimps and prawns_')
+st.write('oleh : **I Putu A. Angga Krishna**')
+st.write('Seafood adalah makanan yang tinggi protein dan mudah untuk didapatkan di Indonesia karena wilayah perairan indonesia lebih luas ketimbang daratannya. Selain di Indonesia, hampir sebagian besar negara memiliki olehan seafood tersendiri. Salah satu bahan makanan yang hampir selalu ada saat membeli olahan seafood adalah **udang**.')
 image = Image.open('udang.JPG')
 
 st.image(image, caption='makanan berbahan udang')
 st.write('Selain memproduksi sendiri, untuk memenuhi kebutuan pasar di setiap negara, sebagian besar negara juga tergantung dari ekspor negara lain')
-st.write('berikut ini adalah daftar negara pengekspor udang beku (5)terbesar didunia')
+st.write('berikut ini adalah daftar **5** Negara **pengekspor udang beku** (_Product: 030617 Frozen shrimps and prawns_) terbesar didunia')
 data = pd.read_csv('5exportall.csv')
 data = data.set_index('country').stack().reset_index()
 data.columns=['country', 'year', 'total']
-data_all = data.head(25)
+data_all = data
 data_indonesia = data_all.loc[data_all['country'] == 'Indonesia']
 data_indonesia = data_indonesia.set_index('country')
 tahun =list(set(data['year']))
@@ -64,30 +65,34 @@ with st.sidebar:
     st.write('Select:', option)
 # sidebar-end
 data_5_all = data_5_all.loc[(data_5_all['year']<=end_tahun) & (data_5_all['year']>=start_tahun)]
+
 with st.container():
     st.title('TOP 5 Negara Export Udang Beku')
-    st.write('nilai per ribu USD')
+    st.write('_nilai per ribu USD_')
     jumlah = (int(end_tahun)-int(start_tahun)+1)*5
-    c = alt.Chart(data_all).mark_line().encode(
+    data_top_all = data.loc[(data['year']<=end_tahun) & (data['year']>=start_tahun)]
+    
+    
+    c = alt.Chart(data_top_all.head(jumlah)).mark_line().encode(
         x='year', y='total', color='country',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c, use_container_width=True)
-    st.write('untuk tahun 2021 saja dari grafik diatas dapat dilihat bahwa India berada pada tingkat pengekspor udang terbesar didunia yaitu 5,148,765.000 USD,diikuti oleh Equador, Vietnam, Indonesia (1,530,310.000 USD), dan Argentina')
-    
+    st.write('Untuk tahun **2021** saja dari grafik diatas dapat dilihat bahwa **India** berada pada tingkat pengekspor udang **terbesar** didunia yaitu **5,148,765 USD**,diikuti oleh **Equador, Vietnam, Indonesia (1,530,310.000 USD), dan Argentina**')
+    st.markdown('')
     with st.expander("Lihat Data Tabel"):
-        table = pd.pivot_table(data_all, values='total', index=['country'],
+        table = pd.pivot_table(data_top_all.head(jumlah), values='year', index=['country'],
                         columns=['year'])
         st.table(table)
         st.write("""
-            Sumber trademap.org""")
+            Sumber https://trademap.org""")
    
 with st.container():
     image = Image.open('berita.JPG')
 
     st.image(image, caption='berita export udang')
     st.title('Hasil Ekspor Indonesia per tahun')
-    st.write('2017-2021')
-    st.write('per ribu USD')
+    st.write('_2017-2021_')
+    st.write('_per ribu USD_')
     data_indonesia_ori = data_indonesia
     data_indonesia = data_indonesia.loc[(data_indonesia['year']<=end_tahun) & (data_indonesia['year']>=start_tahun)]
 
@@ -120,9 +125,9 @@ with st.container():
         x='year:O',
         tooltip=['year', 'total']
     )
-    st.write('Untuk tahun 2017 - 2019 ekspor Indonesia untuk udang beku mengalami penurunan hingga 6%. Tetapi setelah 2019-2021 terdapat peningkatan ekspor yang mencapai 17% pada tahun 2021')
+    st.write('Untuk tahun **2017 - 2019** ekspor Indonesia untuk udang beku mengalami **penurunan** hingga **6%**. Tetapi setelahnya **2019-2021** terdapat **peningkatan** ekspor yang mencapai **17%** pada tahun **2021**')
     st.altair_chart(bar_chart_indonesia, use_container_width=True)
-    st.write('melansir dari detik finance  Penurunan nilai ekspor udang pada tahun 2019 ini terjadi akibat turunnya harga ekspor udang dari Indonesia, yakni menjadi USD 8,26 per kilogram pada kuartal I 2019 dari sebelumnya USD 9,35 per kilogram. dikarenakan beberapa produsen utama dunia seperti India, Argentina, dan Meksiko pasokannya meningkat di pasar-pasar tersebut dengan harga yang relatif rendah.')
+    st.write('melansir dari detik finance  **Penurunan** nilai ekspor udang pada tahun **2019** ini terjadi akibat **turunnya harga ekspor udang dari Indonesia**, yakni menjadi **USD 8,26/kg** pada kuartal I 2019 dari sebelumnya **USD 9,35/kg**. dikarenakan beberapa produsen utama dunia seperti **India, Argentina, dan Meksiko** pasokannya meningkat di pasar-pasar tersebut dengan harga yang relatif rendah.')
     with st.expander('sumber berita'):
         st.write("finance.detik.com/berita-ekonomi-bisnis/d-4592433/penjelasan-lengkap-kkp-soal-ekspor-produk-perikanan-turun")
     with st.expander("Lihat Data Tabel"):
@@ -144,8 +149,13 @@ with st.container():
         x='country:O', y='total:Q', column='year:N', color='country:N',tooltip=['year', 'total', 'country'])
 
     st.altair_chart(c)
-    st.write('United States of America adalah negara dengan importir udang beku terbanyak dari indonesia. walaupun nilai dari tahun 2017-2019 terjadi penurunan, tetapi untuk tahun berikutnya terlah terjadi lonjakan ekspor yang meningkat bahkan melewati nilai ekspor 5 tahun terakhir. Sedangkan untuk pasar Jepang ekspor Indonesia terlihat stabil dengan naik turun yang tidak begitu banyak.')
-    st.write('Untuk pasar China dari tahun 2020 terjadi penurunan sampai tahun 2021. Hal ini dikarenakan COVID 19 yang terjadi pada awalnya di Cina sehingga menyebabkan export ke negara Cina tidak dapat dilakukan')
+    st.write('Untuk pasar **China** dari tahun 2020 terjadi **penurunan** sampai tahun 2021. Hal ini dikarenakan **COVID 19** yang terjadi pada awalnya di Cina sehingga menyebabkan export ke negara Cina tidak dapat dilakukan')
+    
+    st.write('**United States of America** adalah negara dengan importir udang beku **terbanyak dari indonesia**. walaupun nilai dari tahun 2017-2019 terjadi penurunan, tetapi untuk tahun berikutnya terlah terjadi lonjakan ekspor yang meningkat bahkan melewati nilai ekspor 5 tahun terakhir. Sedangkan untuk pasar **Jepang** ekspor Indonesia terlihat **stabil** dengan naik turun yang tidak begitu banyak.')
+    with st.expander('sumber berita:'):
+        st.write('https://lokadata.id/artikel/ekspor-udang-masih-bisa-tumbuh-lebih-tinggi')
+        st.write('Pendiri PT Dewi Laut Aquaculture Rizal Mallarangeng mengatakan, harga udang di pasar internasional bagus karena sejumlah negara, seperti Amerika Serikat, memang tidak terlalu ketat menerapkan pembatasan. **Walmart, misalnya, buka seperti biasa**. Pandemi seperti tak berpengaruh, katanya.')
+    
     with st.expander("Lihat Data Tabel"):
         table = pd.pivot_table(data_5_all_negara, values='total', index=['country'],
                         columns=['year'])
@@ -155,7 +165,7 @@ with st.container():
 
 with st.container():
     st.title('Pengaruh Daya Saing (RCA) terhadap Ekspor Udang Indonesia')
-    st.write('ke negara top 5 importir (Canada, China, Jepang, US, Taipe)')
+    st.write('_ke negara top 5 importir (Canada, China, Jepang, US, Taipe_)')
 #persiapan RCA    
 # st.table(data_5_all)
 data_5_country= data_5_all['country'].unique()
@@ -290,13 +300,15 @@ c5 = alt.Chart(data_join_top_5).mark_line().encode(
         x='year', y='RCA', color='country',tooltip=['year', 'RCA', 'country'])
 
 st.altair_chart(c5, use_container_width=True)
-st.write('Revealed Comparative Advantage (RCA) digunakan menentukan keunggulan daya saing.')
-st.write('Jika nilai RCA > 1 maka berdaya saing KUAT sedangkan')
-st.write('Jika nilai RCA < 1 maka berdaya saing LEMAH')
-st.write('Dalam data diatas daya saing LEMAH hanya terdapat pada CHINA di tahun 2021 yaitu sebesar 0.38 selainnya bernilai KUAT hal ini disebabkan karena export yang masuk ke negara tersebut tidak bisa dilakukan karena COVID 19 yang baru melanda China')
-st.write('Itu berarti daya saing Udang Beku Indonesia dapat bersaing dengan exportir dari negara lain tetapi untuk negara China masih perlu adanya peningkatan daya saing agar China kembali melakukan export ke Indonesia apalagi dengan COVID 19 yang sudah mebaik kedepannya')
+st.write('**Revealed Comparative Advantage (RCA) digunakan menentukan keunggulan daya saing.**')
+st.write('_Jika nilai **RCA** > **1** maka berdaya saing **KUAT** sedangkan_')
+st.write('_Jika nilai **RCA** < **1** maka berdaya saing **LEMAH**_')
+st.write('Dalam data diatas daya saing **LEMAH** hanya terdapat pada **CHINA** di tahun **2021** yaitu sebesar **0.38** selainnya bernilai **KUAT** hal ini disebabkan karena export yang masuk ke negara tersebut **tidak bisa** dilakukan karena **COVID 19** yang baru melanda **China**')
+st.write('Itu berarti daya saing Udang Beku **Indonesia dapat bersaing** dengan exportir dari **negara lain** tetapi untuk negara **China** masih **perlu adanya peningkatan** daya saing agar China kembali melakukan export ke Indonesia apalagi dengan COVID 19 yang sudah mebaik kedepannya')
 with st.expander("Lihat Data Tabel"):
-    st.write(data_join_top_5)
+    st.write('sumber rumus : https://www.kemendag.go.id/addon/rca/')
+    st.write(data_join_top_5.dropna(subset=['country', 'year']))
+
 
 
 
@@ -387,24 +399,24 @@ def histogram_total():
     plt.hist(x)
 
     st.pyplot(fig)
-col1,col2,col3 = st.columns(3)
-with col1:
-    st.write('Nilai RCA')
-    histogram()
+# col1,col2,col3 = st.columns(3)
+# with col1:
+#     st.write('Nilai RCA')
+#     histogram()
     
-with col2:
-    st.write('Jumlah Ekspor')
-    histogram_total()
-with col3:
-    st.write('Hubungan Jumlah Export -> RCA')  
-    regresi()
+# with col2:
+#     st.write('Jumlah Ekspor')
+#     histogram_total()
+# with col3:
+#     st.write('Hubungan Jumlah Export -> RCA')  
+#     regresi()
 
 
 
 
 #caridata
 cari = option
-st.write('Pilih data dari dropdown di sidebar untuk melihat nilai RCA')
+st.write('**Pilih data dari dropdown di sidebar untuk melihat nilai RCA**')
 st.write(cari)
 data1=data_5_all.loc[data_5_all['country']==cari].reset_index(drop=True)
 data2 = export_total_indo_all.loc[export_total_indo_all['country']==cari]
@@ -450,14 +462,159 @@ negara_latlong = pd.merge(negara_tidak_indonesia,latlong, on='country')
 
 negara_latlong['lat'].astype(int)
 negara_latlong['lon'].astype(int)
-st.map(negara_latlong[['lat','lon']])
-st.write('Data sebaran diatas adalah negara-negara yang melakukan import udang beku dari negara lain diluar Indonesia')
 
-st.write('Jika dilihat negara yang dekat dengan Indonesia, yaitu Timor-Leste saja melakukan import udang dari negara lain padalah kita adalah negara tetangga terdekatnya.')
+with st.container():
+    st.header('Export Product Dynamics ')
+    st.write('Melihat tingkat kedinamisan pertumbuhan ekspor pada suatu peridoe tertentu yang nantinya akan dikelompokan menjadi 4 indikator yaitu rising star, falling star, lost opportunity dan retreat.')
+    image = Image.open('matrix.JPG')
+    st.image(image,'matrix EPD')
+    data_import = pd.read_csv('indo_import_udang_dunia.csv')
+    data_import = data_import.loc[data_import['country']=='World']
+    data_export_dunia = pd.read_csv('export_dunia.csv')
+    data_export_dunia = data_export_dunia.loc[data_export_dunia['country']=='World']
+    data_import = data_import.set_index('country').stack().reset_index()
+    data_export_dunia = data_export_dunia.set_index('country').stack().reset_index()
+    data_import.columns=['country1', 'year', 'indo_import_udang']
+    data_export_dunia.columns=['country2', 'year', 'export_seluruh_dunia']
+    # data_import
+    # data_export_dunia
+    
+    # data1
+    udang_indonesia_ke_all = pd.read_csv('indonesia_export_udang_ke_all.csv')
+    udang_indonesia_ke_all_world = udang_indonesia_ke_all.iloc[0:1 , :]
+    udang_indonesia_ke_all = udang_indonesia_ke_all.iloc[1: , :]
+    #udang_indonesia_ke_all = udang_indonesia_ke_all.head(5)
+    #st.write(udang_indonesia_ke_all)
+    #st.write(udang_indonesia_ke_all_world.head(5))
+    data_5_all = udang_indonesia_ke_all.set_index('country').stack().reset_index()
+    data_5_all.columns=['country', 'year', 'total']
+    #data indonesia export semua komuditas ke negara tujuan
+    export_total_indo_all = pd.read_csv('export_total_negara_indo_ke_all.csv')
+    export_total_indo_all_world = export_total_indo_all.iloc[0:1 , :]
+    export_total_indo_all = export_total_indo_all.iloc[1: , :]
+    #export_total_indo_all = export_total_indo_all.head(5)
+    export_total_indo_all=export_total_indo_all.set_index('country').stack().reset_index()
+    export_total_indo_all.columns=['country', 'year', 'total_menerima_export_all_produk']
+    
+    export_udang_dunia_all = pd.read_csv('export_udang_dunia_ke_all.csv')
+    export_udang_dunia_all_world = export_udang_dunia_all.iloc[0:1 , :]
+    export_udang_dunia_all = export_udang_dunia_all.iloc[1: , :]
+    export_udang_dunia_all = export_udang_dunia_all.set_index('country').stack().reset_index()
+    export_udang_dunia_all.columns=['country', 'year', 'export_udang_dunia']
+    
+    export_total_dunia_all = pd.read_csv('export_total_dunia_ke_all.csv')
+    export_total_dunia_all_world = export_total_dunia_all.iloc[0:1 , :]
+    export_total_dunia_all = export_total_dunia_all.iloc[1: , :]
+    export_total_dunia_all = export_total_dunia_all.set_index('country').stack().reset_index()
+    export_total_dunia_all.columns=['country', 'year', 'export_total_dunia']
+    data_5_all.columns=['country', 'year', 'total_menerima_export_udang_dari_indonesia']
+    data_baru = data_5_all
+
+    data1=data_baru.reset_index(drop=True)
+    data2 = export_total_indo_all
+    data2 = data2[['country','year','total_menerima_export_all_produk']].reset_index(drop=True)
+    data3 = export_udang_dunia_all
+    data3 = data3[['country','year','export_udang_dunia']].reset_index(drop=True)
+    data4 = export_total_dunia_all
+    data4 = data4[['country','year','export_total_dunia']].reset_index(drop=True)
+    # data1
+    # data2
+    # data3
+    # data4
+    data_join = pd.merge(data1,data2,on=['country','year'], how='left')
+    data_join = pd.merge(data_join,data3,on=['country','year'], how='left')
+    data_join = pd.merge(data_join,data4,on=['country','year'], how='left')
+    data_join = pd.merge(data_join,data_import,on='year', how='left')
+    data_join = pd.merge(data_join,data_export_dunia,on='year', how='left')
+    hasil = data_join
+    hasil['atas'] = data_join['total_menerima_export_udang_dari_indonesia']/data_join['indo_import_udang']
+    hasil['bawah'] = data_join['export_total_dunia']/data_join['export_seluruh_dunia']
+    
+    hasil_2021 = hasil.loc[hasil['year'] == '2021']
+    hasil_2021 = hasil_2021[['country','atas','bawah']]
+    hasil_2021.columns=['country', 'atas_2021', 'bawah_2021']
+
+    hasil_2020 = hasil.loc[hasil['year'] == '2020']
+    hasil_2020 = hasil_2020[['country','atas','bawah']]
+    hasil_2020.columns=['country', 'atas_2020', 'bawah_2020']
+
+    hasil_2019 = hasil.loc[hasil['year'] == '2019']
+    hasil_2019 = hasil_2019[['country','atas','bawah']]
+    hasil_2019.columns=['country', 'atas_2019', 'bawah_2019']
+
+    hasil_2018 = hasil.loc[hasil['year'] == '2018']
+    hasil_2018 = hasil_2018[['country','atas','bawah']]
+    hasil_2018.columns=['country', 'atas_2018', 'bawah_2018']
+
+    hasil_2017 = hasil.loc[hasil['year'] == '2017']
+    hasil_2017 = hasil_2017[['country','atas','bawah']]
+    hasil_2017.columns=['country', 'atas_2017', 'bawah_2017']
+
+    epd = pd.merge(hasil_2021,hasil_2020,on=['country'], how='left')
+    epd = pd.merge(epd,hasil_2019,on=['country'], how='left')
+    epd = pd.merge(epd,hasil_2018,on=['country'], how='left')
+    epd = pd.merge(epd,hasil_2017,on=['country'], how='left')
+    
+
+    epd['atas_2021'].astype(str).astype(float)
+    epd['atas_2020'].astype(str).astype(float)
+    epd['atas_2019'].astype(str).astype(float)
+    epd['atas_2018'].astype(str).astype(float)
+    epd['atas_2017'].astype(str).astype(float)
+    epd['bawah_2021'].astype(str).astype(float)
+    epd['bawah_2020'].astype(str).astype(float)
+    epd['bawah_2019'].astype(str).astype(float)
+    epd['bawah_2018'].astype(str).astype(float)
+    epd['bawah_2017'].astype(str).astype(float)
+    epd['hasil_atas_sesudah_covid'] = (epd['atas_2021']-epd['atas_2020'])/2
+    epd['hasil_bawah_sesudah_covid'] = (epd['bawah_2021']-epd['bawah_2020'])/2
+    epd['hasil_atas_sebelum_covid'] = (epd['atas_2020']-epd['atas_2019'])/2
+    epd['hasil_bawah_sebelum_covid'] = (epd['bawah_2020']-epd['bawah_2019'])/2
+    epd.loc[(epd['hasil_atas_sebelum_covid'] <0) & (epd['hasil_bawah_sebelum_covid']<0), 'keterangan_sebelum'] = 'Retreat'
+    epd.loc[(epd['hasil_atas_sebelum_covid'] >=0) & (epd['hasil_bawah_sebelum_covid']>=0), 'keterangan_sebelum'] = 'Rising Star'
+    epd.loc[(epd['hasil_atas_sebelum_covid'] >=0) & (epd['hasil_bawah_sebelum_covid']<0), 'keterangan_sebelum'] = 'Falling Star' 
+    epd.loc[(epd['hasil_atas_sebelum_covid'] <0) & (epd['hasil_bawah_sebelum_covid']>=0), 'keterangan_sebelum'] = 'Lost Opportunity'   
+    epd.loc[(epd['hasil_atas_sebelum_covid'] <0) & (epd['hasil_bawah_sebelum_covid']>=0), 'keterangan_sebelum'] = 'Lost Opportunity' 
+
+    epd.loc[(epd['hasil_atas_sesudah_covid'] <0) & (epd['hasil_bawah_sesudah_covid']<0), 'keterangan_sesudah'] = 'Retreat'
+    epd.loc[(epd['hasil_atas_sesudah_covid'] >=0) & (epd['hasil_bawah_sesudah_covid']>=0), 'keterangan_sesudah'] = 'Rising Star'
+    epd.loc[(epd['hasil_atas_sesudah_covid'] >=0) & (epd['hasil_bawah_sesudah_covid']<0), 'keterangan_sesudah'] = 'Falling Star' 
+    epd.loc[(epd['hasil_atas_sesudah_covid'] <0) & (epd['hasil_bawah_sesudah_covid']>=0), 'keterangan_sesudah'] = 'Lost Opportunity'   
+    epd.loc[(epd['hasil_atas_sesudah_covid'] <0) & (epd['hasil_bawah_sesudah_covid']>=0), 'keterangan_sesudah'] = 'Lost Opportunity'     
+    
+    # epd
+    c = alt.Chart(epd).mark_circle().encode(
+     x='hasil_atas_sebelum_covid', y='hasil_bawah_sebelum_covid', color='country', tooltip=['hasil_atas_sebelum_covid', 'hasil_bawah_sebelum_covid', 'country','keterangan_sebelum'])
+
+    st.subheader('Matrix Sebelum Covid 19')
+    st.altair_chart(c, use_container_width=True)
+
+    
+  
+    # epd
+    d = alt.Chart(epd).mark_circle().encode(
+     x='hasil_atas_sesudah_covid', y='hasil_bawah_sesudah_covid', color='country', tooltip=['hasil_atas_sesudah_covid', 'hasil_bawah_sesudah_covid', 'country','keterangan_sesudah'])
+    
+    epd.loc[(epd['keterangan_sesudah'] == epd['keterangan_sebelum']), 'status'] = 'Tidak Ada Perubahan'
+    epd.loc[(epd['keterangan_sesudah'] != epd['keterangan_sebelum']), 'status'] = 'Ada Perubahan'
+    st.subheader('Matrix Setelah Covid 19')
+    st.altair_chart(d, use_container_width=True)
+    st.write('Dari diagram diatas terdapat perubahan status dari sebelum terjadinya COVID 19 dengan Sesudah terjadinya Covid 19')
+    st.write('dimana sebagai contoh **USA** mengalami perubahan status dari **Rising Star** menjadi **Retreat**')
+    st.write('tetapi sebaliknya **Brunei Darussalam** mengalami perubahan status dari **Lost Opportunity** menjadi **Rising Star**')
+    with st.expander('lihat sumber'):
+        st.write('')
+        st.write('sumber Estherhuizen D. 2006. Measuring and Analyzing Competitiveness in the  Agribusiness Sector: Methodological and Analytical Framework')
+        st.table(epd[['country','keterangan_sebelum','keterangan_sesudah','status']])
+        
+st.map(negara_latlong[['lat','lon']])
+st.write('Data sebaran diatas adalah negara-negara yang melakukan import udang beku dari **negara lain diluar Indonesia**')
+
+st.write('Jika dilihat negara yang dekat dengan Indonesia, yaitu **Timor-Leste** saja melakukan import udang dari negara lain padalah kita adalah negara tetangga terdekatnya.')
 col1,col2 = st.columns(2)
 
 with col1:
-    st.write('Top 10 Daftar Negara Importir Udang bukan dari Indonesia')
+    st.write('**Top 10 Daftar Negara Importir Udang bukan dari Indonesia**')
    
 
     c = alt.Chart(negara_latlong.head(10)).mark_bar(interpolate='basis').encode(
@@ -465,7 +622,7 @@ with col1:
 
     st.altair_chart(c)
 with col2:
-    st.write('Down 10 Daftar Negara Importir Udang bukan dari Indonesia')
+    st.write('**Down 10 Daftar Negara Importir Udang bukan dari Indonesia**')
     
 
     c = alt.Chart(negara_latlong.tail(10)).mark_bar(interpolate='basis').encode(
